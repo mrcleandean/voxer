@@ -1,0 +1,174 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum UserPower {
+  MEMBER
+  ELITE
+  PRESTIGE
+  GOVERNMENT
+}
+
+model User {
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  username      String?      @unique
+  biography     String?
+  location      String?
+  website       String?
+  accounts      Account[]
+  sessions      Session[]
+  preferences   Preferences?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  type UserPower @default(MEMBER)
+
+  followers Follow[] @relation("Following")
+  following Follow[] @relation("Followers")
+
+  votes     Vote[]
+  reshares  ReShare[]
+  voxes     Vox[]
+  comments  Comment[]
+  cooldowns Cooldowns?
+}
+
+model Preferences {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  darkMode       Boolean @default(true)
+  showLocation   Boolean @default(true)
+  showPower      Boolean @default(true)
+  showVoxes      Boolean @default(true)
+  showComments   Boolean @default(true)
+  showVoted      Boolean @default(true)
+  showEmail      Boolean @default(false)
+  privateProfile Boolean @default(false)
+}
+
+model Follow {
+  follower   User   @relation("Followers", fields: [followerId], references: [id])
+  followerId String
+  followee   User   @relation("Following", fields: [followeeId], references: [id])
+  followeeId String
+
+  @@id([followerId, followeeId])
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  userId    String
+  voxId     String?
+  commentId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  net       Int      @default(0)
+
+  user    User     @relation(fields: [userId], references: [id])
+  vox     Vox?     @relation(fields: [voxId], references: [id])
+  comment Comment? @relation(fields: [commentId], references: [id])
+
+  @@unique([userId, voxId], name: "unique_user_vox")
+  @@unique([userId, commentId], name: "unique_user_comment")
+}
+
+model ReShare {
+  id        String   @id @default(cuid())
+  userId    String
+  voxId     String?
+  commentId String?
+  content   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id])
+  vox     Vox?     @relation(fields: [voxId], references: [id])
+  comment Comment? @relation(fields: [commentId], references: [id])
+}
+
+model Vox {
+  id        String    @id @default(cuid())
+  content   String    @default("")
+  location  String    @default("")
+  tags      String[]
+  imageUrls String[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String
+  comments  Comment[]
+  votes     Vote[]
+  reshares  ReShare[]
+  isVoxxed  Boolean   @default(false)
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  text      String
+  createdAt DateTime  @default(now())
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String
+  post      Vox       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  replyToId String?
+  replyTo   Comment?  @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  replies   Comment[] @relation("ReplyTo")
+  votes     Vote[]
+  reshares  ReShare[]
+  isVoxxed  Boolean   @default(false)
+}
+
+model Cooldowns {
+  userId              String   @unique
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  commentCooldownEnds DateTime @default(now())
+  voxCooldownEnds     DateTime @default(now())
+  reshareCooldownEnds DateTime @default(now())
+  voteCooldownEnds    DateTime @default(now())
+  user                User     @relation(fields: [userId], references: [id])
+
+  @@id([userId])
+}
