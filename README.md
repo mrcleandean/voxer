@@ -37,6 +37,18 @@ Dive into discussions by commenting on posts. Your voice contributes to shaping 
 
 Join Voxer with a straightforward and secure authentication process. Get started in minutes and begin your journey in this democratic space.
 
+### Post Cooldowns
+
+![Post Cooldowns](/public/readme-assets/postcooldown.png?raw=true "Jussst enough spamming")
+
+If we're going to be a community moderated platform, we will need to fine tune the rate at which users can post over time such that content can effectively be protected or voxxed.
+
+### Comment Cooldowns
+
+![User Authentication](/public/readme-assets/commentcooldown.png?raw=true "Jussst enough spamming")
+
+The same goes for comments, we don't want too much spam.
+
 ### User profiles and Multiuser Support
 
 ![Followers and Follows](/public/readme-assets/userprofiles.png?raw=true "Connect with others")
