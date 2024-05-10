@@ -45,9 +45,9 @@ If we're going to be a community moderated platform, we will need to fine tune t
 
 ### Comment Cooldowns
 
-![User Authentication](/public/readme-assets/commentcooldown.png?raw=true "Jussst enough spamming")
+![User Authentication](/public/readme-assets/votecooldown.png?raw=true "Jussst enough spamming")
 
-The same goes for comments, we don't want too much spam.
+The same goes for votes, we don't want too much spam.
 
 ### User profiles and Multiuser Support
 
