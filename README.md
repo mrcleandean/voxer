@@ -43,7 +43,7 @@ Join Voxer with a straightforward and secure authentication process. Get started
 
 If we're going to be a community moderated platform, we will need to fine tune the rate at which users can post over time such that content can effectively be protected or voxxed.
 
-### Comment Cooldowns
+### Vote Cooldowns
 
 ![User Authentication](/public/readme-assets/votecooldown.png?raw=true "Jussst enough spamming")
 
