@@ -46,7 +46,7 @@ Customize your user profile to reflect your personality. Your profile is your sp
 
 ### Search Functionality
 
-![Search](readme-assets/searchfunctionality.png "Find friend or foe")
+![Search](public/readme-assets/searchfunctionality.png "Find friend or foe")
 
 Voxer's vision is to disallow blocking. If you wan't to Vox someone out, you will be able to find them. Watch your back!
 
