@@ -40,13 +40,13 @@ Follow other users to keep up with their posts and comments. Build your network 
 
 ### Edit Profile
 
-![Custom Everything](readme-assets/editprofile.png "Your space to express")
+![Edit Profile](readme-assets/editprofile.png "Your space to express")
 
 Customize your user profile to reflect your personality. Your profile is your space to express who you are and what you stand for.
 
 ### Search Functionality
 
-![Search](public/readme-assets/searchfunctionality.png "Find friend or foe")
+![Search](/public/readme-assets/searchfunctionality.png?raw=true "Find friend or foe")
 
 Voxer's vision is to disallow blocking. If you wan't to Vox someone out, you will be able to find them. Watch your back!
 
