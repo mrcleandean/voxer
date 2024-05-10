@@ -8,6 +8,11 @@ Welcome to Voxer, a unique social experiment where the community holds the power
 - **Engaging Discussions**: Start conversations, participate in debates, and connect with others who share your interests in a dynamic and interactive environment.
 - **Rich User Profiles**: Create and customize your profile to express your identity in the Voxer community.
 
+## License
+
+This project is released under the Custom Restricted Use License. This license allows cloning and running the software locally for demonstration purposes but restricts deployment and significant modification. For more details, see the [LICENSE](LICENSE) file in this repository.
+
+
 ## Snapshots
 
 ### Your Own Home Page
