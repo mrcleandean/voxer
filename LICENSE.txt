@@ -4,27 +4,41 @@ License Agreement for Voxer
 
 "Software" refers to the Voxer software in its entirety, provided to you by the Author.
 "Author" refers to the creator and rights holder of the Software.
+
+
 2. Grant of License
 
 The Author grants you a non-exclusive, non-transferable license to clone and run the Software for demonstration purposes only, provided that you comply with the terms and conditions of this License Agreement.
+
+
 3. Restrictions
 
 Modification: You may modify the Software only to the extent of entering necessary environment variables required for demonstration purposes.
 Deployment: You are not permitted to deploy the Software in any public or private setting beyond your local environment meant strictly for demonstration purposes.
 Distribution: You may not distribute or make available the Software, modified or unmodified, to any third parties.
 Commercial Use: The use of the Software for any commercial purposes is strictly prohibited.
+
+
 4. Ownership
 
 The Software is and will remain the sole and exclusive property of the Author, whether the Software is separate or combined with any other software or technology.
+
+
 5. No Warranty
 
 The Software is provided "as is," with no warranties whatsoever, as to the performance or merchantability. The Author does not warrant that the Software is free from defects or that it is suitable for any particular purpose.
+
+
 6. Limitation of Liability
 
 In no event shall the Author be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this Software, even if advised of the possibility of such damage.
+
+
 7. Termination
 
 This License is effective until terminated. You may terminate it at any time by ceasing to use the Software and deleting all copies of the Software in your possession or control. The License will also terminate automatically without notice from the Author if you fail to comply with any term or condition of this License Agreement.
+
+
 8. General
 
 This License constitutes the entire agreement between you and the Author relating to the Software and supersedes all prior or contemporaneous oral or written communications, proposals, and representations with respect to its subject matter.
