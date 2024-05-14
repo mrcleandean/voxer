@@ -38,7 +38,7 @@ const Followers: FC<FollowersProps> = async ({ followers, userId }) => {
     return (
         <div className="flex flex-col gap-2">
             {followers.length === 0 ? (
-                <p className="text-center mt-2 text-foreground">No following yet.</p>
+                <p className="text-center mt-2 text-foreground">No followers yet.</p>
             ) : (
                 <>
                     {followers.map((follow) => {
