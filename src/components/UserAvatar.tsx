@@ -30,7 +30,7 @@ export function UserAvatar({ user, Pressable, ...props }: UserAvatarProps) {
                     <Image
                         fill
                         src={user.image}
-                        alt='profile picture'
+                        alt='Profile picture'
                         referrerPolicy='no-referrer'
                         sizes='24px 44px 112px 144px'
                     />

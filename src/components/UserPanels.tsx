@@ -123,7 +123,7 @@ const UserPanels: FC<UserPanelsProps> = ({ userId, initialVotes }) => {
             <div ref={postPanelContainerRef} className='h-fit rounded-lg md:border border-border flex-1 w-full md:max-w-[45rem]'>
                 <div className='border-b border-border px-6 md:py-3 pb-2'>
                     <p className='font-semibold text-foreground py-3 flex items-center gap-1.5'>
-                        What's on your mind?
+                        What&apos;s on your mind?
                         <MessageCircleQuestion className="w-5 h-5" />
                     </p>
                 </div>
@@ -134,7 +134,11 @@ const UserPanels: FC<UserPanelsProps> = ({ userId, initialVotes }) => {
                             <div className="flex flex-wrap gap-2">
                                 {voxData.images.map(({ preview }, i) => (
                                     <div key={`${i}-user-image-${preview}`} className="relative overflow-hidden h-16 w-16 border border-border rounded-lg">
-                                        <img src={preview} alt="Preview" className="object-cover min-w-full min-h-full" />
+                                        <img
+                                            src={preview}
+                                            alt="Preview"
+                                            className="object-cover min-w-full min-h-full"
+                                        />
                                         <div className="inset-0 absolute flex items-center justify-center group">
                                             <div className="absolute inset-0 bg-transparent group-hover:bg-secondary opacity-0 group-hover:opacity-40" />
                                             <div className="bg-background opacity-0 group-hover:opacity-85 rounded-full p-2 cursor-pointer" onClick={() => {

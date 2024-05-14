@@ -102,7 +102,11 @@ const EditUserClient: FC<EditUserClientProps> = ({ dbUser, preferences }) => {
                     <h1>Edit Profile</h1>
                 </div>
                 <div className='relative h-48 w-full overflow-hidden'>
-                    <img src="https://pbs.twimg.com/profile_banners/1567309199063007232/1662513160/1500x500" alt="Descriptive Alt Text" className="w-full h-full object-cover" />
+                    <img
+                        alt="Profile banner"
+                        src="https://pbs.twimg.com/profile_banners/1567309199063007232/1662513160/1500x500"
+                        className="w-full h-full object-cover"
+                    />
                     <div className='absolute inset-0 flex justify-center items-center gap-4'>
                         <button className='bg-secondary opacity-70 hover:opacity-50 rounded-full p-2.5 flex items-center justify-center text-foreground transition-all'>
                             <Camera className='w-6 h-6' />

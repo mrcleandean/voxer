@@ -62,7 +62,11 @@ const Post: FC<PostProps> = ({
                             </p>
                             {vox.imageUrls.length > 0 && (
                                 <div className='h-48 w-48 overflow-hidden rounded-lg'>
-                                    <img src={vox.imageUrls[0]} className="object-cover min-w-full min-h-full" />
+                                    <img
+                                        alt="thumbnail image"
+                                        src={vox.imageUrls[0]}
+                                        className="object-cover min-w-full min-h-full"
+                                    />
                                 </div>
                             )}
                             {pRef.current?.clientHeight === 192 ? (

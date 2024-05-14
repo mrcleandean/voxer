@@ -90,7 +90,11 @@ const VoxPage = async ({ params: { voxId } }: { params: { voxId: string } }) => 
                                                 <CarouselItem key={`${vox.id}-image-${i}`}>
                                                     <div className='select-none w-full h-full overflow-hidden rounded-lg'>
                                                         <a target='_blank' href={url}>
-                                                            <img src={url} className="object-cover min-w-full min-h-full" />
+                                                            <img
+                                                                alt="vox carousel image"
+                                                                src={url}
+                                                                className="object-cover min-w-full min-h-full"
+                                                            />
                                                         </a>
                                                     </div>
                                                 </CarouselItem>
