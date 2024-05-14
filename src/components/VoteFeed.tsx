@@ -44,63 +44,69 @@ const VoteFeed: FC<VoteFeedProps> = ({ initialVotes, userId, qKey }) => {
     const voted: FeedVote[] = (data?.pages.flatMap((page) => page) ?? initialVotes);
     return (
         <ul className='flex flex-col py-4 gap-4'>
-            {voted.map((vote, index) => {
-                if (vote.vox) {
-                    const votesAmt = vote.vox.votes.reduce((acc: number, vote: Vote) => acc + vote.net, 0);
-                    if (index === voted.length - 1) {
-                        return (
-                            <li key={vote.vox.id + vote.vox.updatedAt} ref={ref}>
+            {voted.length === 0 ? (
+                <div className="w-full flex justify-center">
+                    <p className="text-muted-foreground">Nothing here yet...</p>
+                </div>
+            ) : (
+                voted.map((vote, index) => {
+                    if (vote.vox) {
+                        const votesAmt = vote.vox.votes.reduce((acc: number, vote: Vote) => acc + vote.net, 0);
+                        if (index === voted.length - 1) {
+                            return (
+                                <li key={vote.vox.id + vote.vox.updatedAt} ref={ref}>
+                                    <Post
+                                        vox={vote.vox}
+                                        votesAmt={votesAmt}
+                                        commentAmt={vote.vox.comments.length}
+                                    />
+                                </li>
+                            )
+                        } else {
+                            return (
                                 <Post
+                                    key={vote.vox.id + vote.vox.updatedAt}
                                     vox={vote.vox}
                                     votesAmt={votesAmt}
                                     commentAmt={vote.vox.comments.length}
                                 />
-                            </li>
-                        )
-                    } else {
-                        return (
-                            <Post
-                                key={vote.vox.id + vote.vox.updatedAt}
-                                vox={vote.vox}
-                                votesAmt={votesAmt}
-                                commentAmt={vote.vox.comments.length}
-                            />
-                        )
+                            )
+                        }
                     }
-                }
-                if (vote.comment) {
-                    const votesAmt = vote.comment.votes.reduce((acc: number, vote: Vote) => acc + vote.net, 0);
-                    if (index === voted.length - 1) {
-                        return (
-                            <li key={vote.comment.id} ref={ref}>
+                    if (vote.comment) {
+                        const votesAmt = vote.comment.votes.reduce((acc: number, vote: Vote) => acc + vote.net, 0);
+                        if (index === voted.length - 1) {
+                            return (
+                                <li key={vote.comment.id} ref={ref}>
+                                    <FeedCommentComponent
+                                        comment={vote.comment}
+                                        votesAmt={votesAmt}
+                                        replyAmt={vote.comment.replies.length}
+                                    />
+                                </li>
+                            )
+                        } else {
+                            return (
                                 <FeedCommentComponent
+                                    key={vote.comment.id}
                                     comment={vote.comment}
                                     votesAmt={votesAmt}
                                     replyAmt={vote.comment.replies.length}
                                 />
+                            )
+                        }
+                    }
+                    if (index === voted.length - 1) {
+                        return (
+                            <li key={vote.id + vote.updatedAt} ref={ref}>
+                                Item not found
                             </li>
                         )
                     } else {
-                        return (
-                            <FeedCommentComponent
-                                key={vote.comment.id}
-                                comment={vote.comment}
-                                votesAmt={votesAmt}
-                                replyAmt={vote.comment.replies.length}
-                            />
-                        )
+                        return null;
                     }
-                }
-                if (index === voted.length - 1) {
-                    return (
-                        <li key={vote.id + vote.updatedAt} ref={ref}>
-                            Item not found
-                        </li>
-                    )
-                } else {
-                    return null;
-                }
-            })}
+                })
+            )}
             {
                 isFetchingNextPage && (
                     <li className='flex justify-center'>
