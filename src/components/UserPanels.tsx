@@ -62,11 +62,17 @@ const UserPanels: FC<UserPanelsProps> = ({ userId, initialVotes }) => {
             const files = images.map(({ file }) => file);
 
             VoxPreImageUploadValidator.parse({ content, location, tags, files });
+
+            // Preliminary check to see if the user is in cooldown 
+            // Prevents unnecessary image uploads
+            await axios.get('/api/pre-check/vox');
+
             const uploadedImages = await uploadFiles('imageUploader', { files });
             const imageUrls: string[] = uploadedImages.map((image) => image.url);
 
-            const payload: VoxCreationRequest = { content, location, tags, imageUrls }
-            const { data } = await axios.post('/api/create/vox', payload)
+            // Uploads the post and assigns a cooldown
+            const creationPayload: VoxCreationRequest = { content, location, tags, imageUrls }
+            const { data } = await axios.post('/api/create/vox', creationPayload);
 
             return data
         },

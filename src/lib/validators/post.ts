@@ -25,4 +25,5 @@ export const VoxPreImageUploadValidator = z.object({
     files: z.array(z.instanceof(File)).max(MAX_IMAGES_AMT),
 })
 
+export type VoxPreImageUploadRequest = z.infer<typeof VoxPreImageUploadValidator>
 export type VoxCreationRequest = z.infer<typeof VoxValidator>
