@@ -10,11 +10,12 @@ import { toast } from '../hooks/use-toast'
 import { Button } from './ui/Button'
 import { ArrowBigDown, ArrowBigUp } from 'lucide-react'
 import { CooldownResponseValidator } from '@/lib/validators/cooldown';
+import { useRouter } from 'next/navigation';
 
 interface PostVoteClientProps {
     voxId: string
     initialVotesAmt: number
-    setIsVoxxed: Dispatch<SetStateAction<boolean>>
+    setIsVoxxed: Dispatch<SetStateAction<boolean>> | 'server-rendered'
     isVoxxed: boolean;
 }
 
@@ -24,8 +25,17 @@ const PostVoteClient = ({
     setIsVoxxed,
     isVoxxed
 }: PostVoteClientProps) => {
+    const router = useRouter();
     const { loginToast } = useCustomToasts()
     const [votesAmt, setVotesAmt] = useState<number>(initialVotesAmt)
+
+    const makeVoxxedVisible = () => {
+        if (setIsVoxxed === 'server-rendered') {
+            router.refresh();
+        } else {
+            setIsVoxxed(true);
+        };
+    }
 
     const { mutate: vote } = useMutation({
         mutationFn: async (type: VoteTypes) => {
@@ -38,14 +48,14 @@ const PostVoteClient = ({
         },
         onError: (err, voteType) => {
             if (err instanceof AxiosError && err.response?.status === 410) {
-                setIsVoxxed(true);
+                makeVoxxedVisible();
                 return toast({
                     title: 'You have successfully voxxed this post.',
                     description: 'Content and images have been removed.'
                 });
             }
             if (isVoxxed || err instanceof AxiosError && err.response?.status === 409) {
-                setIsVoxxed(true);
+                makeVoxxedVisible();
                 return toast({
                     title: 'Already Voxxed.',
                     description: 'This post was previously deleted.',

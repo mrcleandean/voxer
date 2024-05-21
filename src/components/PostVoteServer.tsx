@@ -22,11 +22,12 @@ const PostVoteServer = async ({
     getData,
 }: PostVoteServerProps) => {
     let _votesAmt: number = 0
+    let isVoxxed = false;
     if (getData) {
         // fetch data in component
         const post = await getData()
         if (!post) return notFound()
-
+        isVoxxed = post.isVoxxed;
         _votesAmt = post.votes.reduce((acc, vote) => acc + vote.net, 0)
     } else {
         // passed as props
@@ -37,6 +38,8 @@ const PostVoteServer = async ({
         <PostVoteClient
             voxId={voxId}
             initialVotesAmt={_votesAmt}
+            isVoxxed={isVoxxed}
+            setIsVoxxed={'server-rendered'}
         />
     )
 }
