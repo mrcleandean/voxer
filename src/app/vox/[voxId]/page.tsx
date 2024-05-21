@@ -54,9 +54,9 @@ const VoxPage = async ({ params: { voxId } }: { params: { voxId: string } }) => 
                 </Suspense>
 
                 <div className='w-full flex-1 p-4 rounded-sm'>
-                    <div className='h-fit py-1 mt-1 text-xs text-foreground px-4 flex items-center'>
+                    <div className={`${vox.isVoxxed ? 'text-primary' : 'text-foreground'} h-fit py-1 mt-1 text-xs px-4 flex items-center`}>
                         <Link
-                            className='underline text-foreground text-sm underline-offset-2 flex items-center gap-2'
+                            className='underline text-sm underline-offset-2 flex items-center gap-2'
                             href={`/user/${vox.author.id}`}
                         >
                             <UserAvatar user={vox.author} className='w-7 h-7' />
