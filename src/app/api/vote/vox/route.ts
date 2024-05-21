@@ -34,6 +34,24 @@ export async function PATCH(req: Request) {
         })
         const now = new Date();
         if (!cooldown || cooldown.voteCooldownEnds < now) {
+            await db.vote.upsert({
+                where: {
+                    unique_user_vox: {
+                        userId: session.user.id,
+                        voxId,
+                    }
+                },
+                create: {
+                    userId: session.user.id,
+                    voxId,
+                    net: voteType === 'UP' ? 1 : -1
+                },
+                update: {
+                    net: {
+                        increment: voteType === 'UP' ? 1 : -1
+                    }
+                },
+            });
             const netScore = vox.votes.reduce((acc, vote) => acc + vote.net, 0) + (voteType === 'UP' ? 1 : -1);
             if (netScore <= MIN_NET_SCORE_FOR_DELETION) {
                 await db.vox.update({
@@ -59,24 +77,6 @@ export async function PATCH(req: Request) {
                     update: {
                         voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
                     }
-                });
-                await db.vote.upsert({
-                    where: {
-                        unique_user_vox: {
-                            userId: session.user.id,
-                            voxId,
-                        }
-                    },
-                    create: {
-                        userId: session.user.id,
-                        voxId,
-                        net: voteType === 'UP' ? 1 : -1
-                    },
-                    update: {
-                        net: {
-                            increment: voteType === 'UP' ? 1 : -1
-                        }
-                    },
                 });
                 return new Response('OK');
             }
