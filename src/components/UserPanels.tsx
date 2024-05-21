@@ -93,7 +93,7 @@ const UserPanels: FC<UserPanelsProps> = ({ userId, initialVotes }) => {
         onSuccess: () => {
             setVoxData({ ...initialData });
             return toast({
-                description: 'Successfully Voxxed!',
+                description: 'Successfully posted vox!',
             })
         },
     })
