@@ -4,7 +4,7 @@ import { cn, formatTimeToNow } from '@/lib/utils'
 import { Vox, User, Vote } from '@prisma/client'
 import { MessageSquare, Repeat2, Share } from 'lucide-react'
 import Link from 'next/link'
-import { FC, useRef } from 'react'
+import { FC, useRef, useState } from 'react'
 import PostVoteClient from './PostVoteClient'
 import { UserAvatar } from './UserAvatar'
 import { Button, buttonVariants } from './ui/Button'
@@ -21,14 +21,15 @@ interface PostProps {
 interface VoxUserDisplayProps {
     vox: Vox & {
         author: User
-    }
+    },
+    isVoxxed: boolean;
 }
 
-const VoxUserDisplay = ({ vox }: VoxUserDisplayProps) => {
+const VoxUserDisplay = ({ vox, isVoxxed }: VoxUserDisplayProps) => {
     return (
-        <div className='h-fit py-1 mt-1 text-xs text-foreground px-4 flex items-center'>
+        <div className={`${isVoxxed ? 'text-primary' : 'text-foreground'} h-fit py-1 mt-1 text-xs text-foreground px-4 flex items-center`}>
             <Link
-                className='underline text-foreground text-sm underline-offset-2 flex items-center gap-2'
+                className='underline text-sm underline-offset-2 flex items-center gap-2'
                 href={`/user/${vox.author.id}`}
             >
                 <UserAvatar user={vox.author} className='w-7 h-7' />
@@ -46,21 +47,24 @@ const Post: FC<PostProps> = ({
     commentAmt,
 }) => {
     const pRef = useRef<HTMLParagraphElement>(null)
+    const [isVoxxed, setIsVoxxed] = useState(vox.isVoxxed);
     return (
-        <div className='rounded-md bg-background border border-border overflow-hidden'>
+        <div className='bg-background rounded-md border border-border overflow-hidden'>
             <div className='flex'>
                 <PostVoteClient
                     voxId={vox.id}
                     initialVotesAmt={_votesAmt}
+                    setIsVoxxed={setIsVoxxed}
+                    isVoxxed={isVoxxed}
                 />
                 <div className='w-full'>
-                    <VoxUserDisplay vox={vox} />
+                    <VoxUserDisplay vox={vox} isVoxxed={isVoxxed} />
                     <Link href={`/vox/${vox.id}`}>
                         <div className='relative px-4 text-sm max-h-48 w-full overflow-clip' ref={pRef}>
-                            <p className='overflow-hidden text-sm py-2 leading-6 text-foreground text-wrap break-words break-all'>
-                                {vox.content?.toString()}
+                            <p className={`${isVoxxed ? 'text-primary' : 'text-foreground'} overflow-hidden text-sm py-2 leading-6 text-wrap break-words break-all`}>
+                                {isVoxxed ? 'VOXXED' : vox.content?.toString()}
                             </p>
-                            {vox.imageUrls.length > 0 && (
+                            {!isVoxxed && vox.imageUrls.length > 0 && (
                                 <div className='h-48 w-48 overflow-hidden rounded-lg'>
                                     <img
                                         alt="thumbnail image"
@@ -76,7 +80,7 @@ const Post: FC<PostProps> = ({
                     </Link>
                 </div>
             </div>
-            <div className='bg-background border-t border-border z-20 text-sm px-3 py-2 flex justify-between'>
+            <div className={`${isVoxxed ? 'bg-primary' : 'bg-background'} border-t border-border z-20 text-sm px-3 py-2 flex justify-between`}>
                 <Link
                     href={`/vox/${vox.id}`}
                     className={cn(buttonVariants({ variant: 'ghost' }), 'w-fit h-7 flex items-center gap-2 text-foreground')}>

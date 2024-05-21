@@ -18,4 +18,7 @@ export const VOTE_COOLDOWN_INTERVAL = 1000 * 5;
 export const COMMENT_COOLDOWN_INTERVAL = 1000 * 30;
 export const VOX_COOLDOWN_INTERVAL = 1000 * 60 * 2;
 
+export const MIN_TOTAL_VOTES_FOR_DELETION = 10;
+export const MIN_NET_SCORE_FOR_DELETION = -10;
+
 export type VoteTypes = 'UP' | 'DOWN';

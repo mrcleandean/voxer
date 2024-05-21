@@ -5,7 +5,7 @@ import { PostVoteRequest } from '@/lib/validators/vote'
 import { VoteTypes } from '@/config';
 import { useMutation } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { toast } from '../hooks/use-toast'
 import { Button } from './ui/Button'
 import { ArrowBigDown, ArrowBigUp } from 'lucide-react'
@@ -14,18 +14,22 @@ import { CooldownResponseValidator } from '@/lib/validators/cooldown';
 interface PostVoteClientProps {
     voxId: string
     initialVotesAmt: number
-    initialVote?: VoteTypes | null
+    setIsVoxxed: Dispatch<SetStateAction<boolean>>
+    isVoxxed: boolean;
 }
 
 const PostVoteClient = ({
     voxId,
     initialVotesAmt,
+    setIsVoxxed,
+    isVoxxed
 }: PostVoteClientProps) => {
     const { loginToast } = useCustomToasts()
     const [votesAmt, setVotesAmt] = useState<number>(initialVotesAmt)
 
     const { mutate: vote } = useMutation({
         mutationFn: async (type: VoteTypes) => {
+            if (isVoxxed) throw Error('Already Voxxed');
             const payload: PostVoteRequest = {
                 voteType: type,
                 voxId: voxId,
@@ -33,6 +37,20 @@ const PostVoteClient = ({
             await axios.patch(`/api/vote/vox`, payload)
         },
         onError: (err, voteType) => {
+            if (err instanceof AxiosError && err.response?.status === 410) {
+                setIsVoxxed(true);
+                return toast({
+                    title: 'You have successfully voxxed this post.',
+                    description: 'Content and images have been removed.'
+                });
+            }
+            if (isVoxxed || err instanceof AxiosError && err.response?.status === 409) {
+                setIsVoxxed(true);
+                return toast({
+                    title: 'Already Voxxed.',
+                    description: 'This post was previously deleted.',
+                })
+            }
             if (voteType === 'UP') setVotesAmt((prev) => prev - 1)
             else setVotesAmt((prev) => prev + 1)
 
@@ -55,18 +73,19 @@ const PostVoteClient = ({
             })
         },
         onMutate: (type: VoteTypes) => {
+            if (isVoxxed) return;
             setVotesAmt(prev => type === 'UP' ? prev + 1 : prev - 1);
         },
     })
 
     return (
-        <div className='flex flex-col py-2 bg-secondary'>
+        <div className={`${isVoxxed ? 'bg-primary brightness-[1.175]' : 'bg-secondary'} flex flex-col py-2`}>
             {/* upvote */}
             <Button
                 onClick={() => vote('UP')}
                 size='sm'
                 variant='ghost'
-                className='hover:bg-background'
+                disabled={isVoxxed}
                 aria-label='upvote'>
                 <ArrowBigUp className='h-5 w-5 text-foreground' />
             </Button>
@@ -81,6 +100,7 @@ const PostVoteClient = ({
                 onClick={() => vote('DOWN')}
                 size='sm'
                 variant='ghost'
+                disabled={isVoxxed}
                 aria-label='downvote'>
                 <ArrowBigDown className='h-5 w-5 text-foreground' />
             </Button>

@@ -1,4 +1,4 @@
-import { VOTE_COOLDOWN_INTERVAL } from '@/config'
+import { MIN_NET_SCORE_FOR_DELETION, MIN_TOTAL_VOTES_FOR_DELETION, VOTE_COOLDOWN_INTERVAL } from '@/config'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { CooldownResponse } from '@/lib/validators/cooldown'
@@ -13,45 +13,74 @@ export async function PATCH(req: Request) {
         if (!session?.user) {
             return new Response('Unauthorized', { status: 401 })
         }
+        const vox = await db.vox.findUnique({
+            where: {
+                id: voxId
+            },
+            include: {
+                votes: true
+            }
+        });
+        if (!vox) {
+            return new Response('Vox not found', { status: 404 });
+        }
+        if (vox.isVoxxed) {
+            return new Response('Already Voxxed', { status: 409 });
+        }
         let cooldown = await db.cooldowns.findUnique({
             where: {
                 userId: session.user.id,
             }
         })
-
         const now = new Date();
         if (!cooldown || cooldown.voteCooldownEnds < now) {
-            await db.cooldowns.upsert({
-                where: {
-                    userId: session.user.id,
-                },
-                create: {
-                    userId: session.user.id,
-                    voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
-                },
-                update: {
-                    voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
-                }
-            });
-            await db.vote.upsert({
-                where: {
-                    unique_user_vox: {
+            const netScore = vox.votes.reduce((acc, vote) => acc + vote.net, 0) + (voteType === 'UP' ? 1 : -1);
+            if (netScore <= MIN_NET_SCORE_FOR_DELETION) {
+                await db.vox.update({
+                    where: {
+                        id: voxId,
+                    },
+                    data: {
+                        isVoxxed: true,
+                        content: 'VOXXED',
+                        imageUrls: [],
+                    }
+                });
+                return new Response('You have successfully voxxed this post.', { status: 410 });
+            } else {
+                await db.cooldowns.upsert({
+                    where: {
+                        userId: session.user.id,
+                    },
+                    create: {
+                        userId: session.user.id,
+                        voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
+                    },
+                    update: {
+                        voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
+                    }
+                });
+                await db.vote.upsert({
+                    where: {
+                        unique_user_vox: {
+                            userId: session.user.id,
+                            voxId,
+                        }
+                    },
+                    create: {
                         userId: session.user.id,
                         voxId,
-                    }
-                },
-                create: {
-                    userId: session.user.id,
-                    voxId,
-                    net: voteType === 'UP' ? 1 : -1
-                },
-                update: {
-                    net: {
-                        increment: voteType === 'UP' ? 1 : -1
-                    }
-                },
-            })
-            return new Response('OK');
+                        net: voteType === 'UP' ? 1 : -1
+                    },
+                    update: {
+                        net: {
+                            increment: voteType === 'UP' ? 1 : -1
+                        }
+                    },
+                });
+                return new Response('OK');
+            }
+
         }
         const cooldownResponse: CooldownResponse = {
             timeLeft: Math.ceil((cooldown.voteCooldownEnds.getTime() - now.getTime()) / 1000),
