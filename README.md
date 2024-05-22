@@ -83,4 +83,10 @@ Scroll and explore the content your fellow Voxers publish.
 
 ![Keep track](/public/readme-assets/votehistory.png?raw=true "Vox a foe, protect a friend")
 
+### Early post and comment moderation
+
+![Post Moderation](/public/readme-assets/postmoderation.png?raw=true "You choose what posts you see")
+
+![Comment Moderation](/public/readme-assets/commentmoderation.png "You choose what comments you see")
+
 Since Voxer is community moderated, users are given cooldowns for voting and posting. If a post reaches a certain ratio of downvotes to upvotes, their post is banished (Voxxed). Your recently voted Voxes is where you'll head if there's someone you want to banish or protect.
