@@ -11,10 +11,6 @@ type FollowersProps = {
     userId: string
 }
 
-// TODO: Fix follow button conditionally for YourProfile and UserAuthedProfile
-// Refer to below
-// TODO: Fix image uploading such that images only upload if a post is successful.
-
 const Followers: FC<FollowersProps> = async ({ followers, userId }) => {
     const session = await getAuthSession();
     const mutualMap: { [key: string]: true } = {};
@@ -51,7 +47,6 @@ const Followers: FC<FollowersProps> = async ({ followers, userId }) => {
                                         <p className="text-sm">{follow.follower.name}</p>
                                     </div>
                                 </Link>
-                                {/* TODO HERE: Refer to above */}
                                 {session?.user.id === userId && (
                                     <FollowUnfollowButton className="scale-[0.8]" initialFollowing={mutualMap[follow.followerId] ?? false} viewerId={follow.followeeId} vieweeId={follow.followerId} />
                                 )}

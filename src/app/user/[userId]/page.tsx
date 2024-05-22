@@ -92,7 +92,7 @@ const UserPage = async ({ params: { userId } }: { params: { userId: string } }) 
                 ) : session && session.user.id !== userId ? (
                     <AuthedViewProfile viewer={session.user} viewee={dbUser} prefs={preferences} />
                 ) : (
-                    <AnonViewProfile viewee={dbUser} />
+                    <AnonViewProfile viewee={dbUser} prefs={preferences} />
                 )}
             </div>
         </div>

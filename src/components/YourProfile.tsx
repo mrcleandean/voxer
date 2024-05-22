@@ -1,7 +1,7 @@
 import type { Preferences } from "@prisma/client";
 import { Calendar, MapPin, ShieldHalf } from "lucide-react";
 import { UserAvatar } from "./UserAvatar";
-import { cn, formatTimeToNow } from "@/lib/utils";
+import { cn, formatTimeToNow, toLowerExceptFirst } from "@/lib/utils";
 import { buttonVariants, } from "./ui/Button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/Tabs";
 import PostFeed from "./PostFeed";
@@ -10,11 +10,6 @@ import Link from "next/link";
 import CommentFeed from "./CommentFeed";
 import { ProfileUser } from "@/types/db";
 import VoteFeed from "./VoteFeed";
-
-export function toLowerExceptFirst(str: string) {
-    if (!str) return str;  // Return the original string if it's empty
-    return str.charAt(0) + str.slice(1).toLowerCase();
-}
 
 const YourProfile = ({ dbUser, prefs }: { dbUser: ProfileUser, prefs: Preferences }) => {
     const name = dbUser.name || 'No Name';

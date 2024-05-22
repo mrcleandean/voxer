@@ -6,7 +6,7 @@ import { FC } from "react";
 import { db } from "@/lib/db";
 import FollowUnfollowButton from "./FollowUnfollowButton";
 import { Calendar, MapPin, ShieldHalf } from "lucide-react";
-import { toLowerExceptFirst } from "./YourProfile";
+import { toLowerExceptFirst } from "@/lib/utils";
 import { formatTimeToNow } from "@/lib/utils";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/Tabs";
@@ -21,7 +21,7 @@ type AuthedViewProfileProps = {
     prefs: Preferences
 }
 
-// Lets say viewer is me and viewee is Mina, who I'm viewing
+// Lets say viewer is me and viewee is another, who I'm viewing
 const AuthedViewProfile: FC<AuthedViewProfileProps> = async ({ viewer, viewee, prefs }) => {
     const name = viewee.name || 'No Name';
     const username = viewee.username || 'No Username';
@@ -37,13 +37,13 @@ const AuthedViewProfile: FC<AuthedViewProfileProps> = async ({ viewer, viewee, p
         <>
             <div className="w-full border-b border-border py-4 px-1 md:px-6 flex gap-2 items-center text-foreground text-2xl font-bold">
                 <BackButton />
-                <h1>{viewee.name}</h1>
+                <h1>{name}</h1>
             </div>
             <div className="pt-5 pb-2.5 px-7 flex justify-between">
                 <div className="flex flex-col items-left justify-center gap-0.5">
                     <UserAvatar user={viewee} className="h-28 w-28 border-[3px] border-foreground" />
-                    <p className="ml-1 mt-2 text-foreground font-semibold text-lg">{viewee.name}</p>
-                    <p className="ml-1 text-muted-foreground text-sm">@{viewee.username}</p>
+                    <p className="ml-1 mt-2 text-foreground font-semibold text-lg">{name}</p>
+                    <p className="ml-1 text-muted-foreground text-sm">@{username}</p>
                 </div>
                 <FollowUnfollowButton initialFollowing={isFollowing} viewerId={viewer.id} vieweeId={viewee.id} />
             </div>

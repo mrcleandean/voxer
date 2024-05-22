@@ -54,3 +54,8 @@ export function formatTimeToNow(date: Date): string {
     },
   })
 }
+
+export function toLowerExceptFirst(str: string) {
+  if (!str) return str;  // Return the original string if it's empty
+  return str.charAt(0) + str.slice(1).toLowerCase();
+}
