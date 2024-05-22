@@ -44,6 +44,7 @@ const UpdateProfileParser = ({ item, input, successString, failureString }: {
 }
 
 const EditUserClient: FC<EditUserClientProps> = ({ dbUser, preferences }) => {
+    // TODO: Implement a way to update the user's profile picture and banner
     const router = useRouter();
     const [newInfo, setNewInfo] = useState<NewInfo>({
         username: dbUser.username || 'Anon',
