@@ -87,10 +87,8 @@ const UserPanels: FC<UserPanelsProps> = ({ userId, initialVotes }) => {
                 })
             }
 
-            if (error instanceof AxiosError) {
-                if (error.response?.status === 401) {
-                    return loginToast();
-                }
+            if (error instanceof AxiosError && error.response?.status === 401) {
+                return loginToast();
             }
 
             return toast({

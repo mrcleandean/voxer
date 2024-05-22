@@ -36,10 +36,9 @@ const CreateComment: FC<CreateCommentProps> = ({ voxId, replyToId }) => {
                     variant: 'destructive',
                 })
             }
-            if (err instanceof AxiosError) {
-                if (err.response?.status === 401) {
-                    return loginToast()
-                }
+
+            if (err instanceof AxiosError && err.response?.status === 401) {
+                return loginToast()
             }
 
             return toast({

@@ -62,10 +62,8 @@ const CommentVotes: FC<CommentVotesProps> = ({
                 })
             }
 
-            if (err instanceof AxiosError) {
-                if (err.response?.status === 401) {
-                    return loginToast()
-                }
+            if (err instanceof AxiosError && err.response?.status === 401) {
+                return loginToast()
             }
 
             return toast({
