@@ -4,6 +4,7 @@ import './globals.css'
 import Providers from '@/components/Providers'
 import Navbar from '@/components/Navbar'
 import { Toaster } from '@/components/ui/Toaster'
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,6 +17,7 @@ export default function RootLayout({ children, authModal }: { children: React.Re
   return (
     <html lang="en" suppressHydrationWarning className='bg-background'>
       <body className={inter.className}>
+        <Analytics />
         <Providers
           attribute="class"
           defaultTheme="dark"
