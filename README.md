@@ -20,7 +20,7 @@ For easy testing, modify the cooldown NODE_ENV === 'development' values in the c
 
 ## Features
 
-- **Community-Driven Moderation Coming Soon!**: Users will have the power to moderate content through community votes, ensuring that the community's standards are upheld without centralized control.
+- **Early Version of Community-Driven Moderation Now Available!**: Users now have the power to moderate content through community votes, ensuring that the community's standards are upheld without centralized control.
 - **Engaging Discussions**: Start conversations, participate in debates, and connect with others who share your interests in a dynamic and interactive environment.
 - **Rich User Profiles**: Create and customize your profile to express your identity in the Voxer community.
 
