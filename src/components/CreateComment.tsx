@@ -9,6 +9,7 @@ import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import { FC, useState } from 'react'
 import { Textarea } from '@/components/ui/Textarea'
+import { CooldownResponseValidator } from '@/lib/validators/cooldown'
 
 interface CreateCommentProps {
     voxId: string
@@ -28,6 +29,13 @@ const CreateComment: FC<CreateCommentProps> = ({ voxId, replyToId }) => {
         },
 
         onError: (err) => {
+            if (err instanceof AxiosError && err.response?.status === 429 && CooldownResponseValidator.safeParse(err.response.data)) {
+                return toast({
+                    title: 'Comment cooldown active.',
+                    description: `You can post again in ${err.response.data.timeLeft} seconds.`,
+                    variant: 'destructive',
+                })
+            }
             if (err instanceof AxiosError) {
                 if (err.response?.status === 401) {
                     return loginToast()

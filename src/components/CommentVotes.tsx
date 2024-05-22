@@ -7,31 +7,50 @@ import { VoteTypes } from '@/config'
 import { useMutation } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { ArrowBigDown, ArrowBigUp } from 'lucide-react'
-import { FC, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { CooldownResponseValidator } from '@/lib/validators/cooldown'
 
 interface CommentVotesProps {
-    commentId: string
-    votesAmt: number
+    commentId: string;
+    votesAmt: number;
+    isVoxxed: boolean;
+    setIsVoxxed: Dispatch<SetStateAction<boolean>>;
 }
 
 const CommentVotes: FC<CommentVotesProps> = ({
     commentId,
-    votesAmt: _votesAmt
+    votesAmt: _votesAmt,
+    isVoxxed,
+    setIsVoxxed
 }) => {
-    const { loginToast } = useCustomToasts()
+    const { loginToast } = useCustomToasts();
     const [votesAmt, setVotesAmt] = useState<number>(_votesAmt)
 
     const { mutate: vote } = useMutation({
         mutationFn: async (type: VoteTypes) => {
+            if (isVoxxed) throw Error('Already Voxxed');
             const payload: CommentVoteRequest = {
                 voteType: type,
                 commentId,
             }
-
             await axios.patch('/api/vote/comment', payload)
         },
         onError: (err, voteType) => {
+            if (isVoxxed || err instanceof AxiosError && err.response?.status === 409) {
+                setIsVoxxed(true);
+                return toast({
+                    title: 'Already Voxxed.',
+                    description: 'This post was previously deleted.',
+                })
+            }
+            if (err instanceof AxiosError && err.response?.status === 410) {
+                setIsVoxxed(true);
+                return toast({
+                    title: 'You have successfully voxxed this comment.',
+                    description: "It's content has been removed."
+                });
+            }
+
             if (voteType === 'UP') setVotesAmt((prev) => prev - 1)
             else setVotesAmt((prev) => prev + 1)
 
@@ -56,6 +75,7 @@ const CommentVotes: FC<CommentVotesProps> = ({
             })
         },
         onMutate: (type: VoteTypes) => {
+            if (isVoxxed) return;
             setVotesAmt(prev => type === 'UP' ? prev + 1 : prev - 1);
         },
     })
@@ -67,12 +87,14 @@ const CommentVotes: FC<CommentVotesProps> = ({
                 onClick={() => vote('UP')}
                 size='sm'
                 variant='ghost'
-                aria-label='upvote'>
+                aria-label='upvote'
+                disabled={isVoxxed}
+            >
                 <ArrowBigUp className='h-5 w-5 text-foreground' />
             </Button>
 
             {/* score */}
-            <p className='text-center py-2 px-1 font-medium text-foreground text-sm'>
+            <p className={`${isVoxxed ? 'text-primary' : 'text-foreground'} text-center py-2 px-1 font-medium text-sm`}>
                 {votesAmt}
             </p>
 
@@ -81,7 +103,9 @@ const CommentVotes: FC<CommentVotesProps> = ({
                 onClick={() => vote('DOWN')}
                 size='sm'
                 variant='ghost'
-                aria-label='downvote'>
+                aria-label='downvote'
+                disabled={isVoxxed}
+            >
                 <ArrowBigDown className='h-5 w-5 text-foreground' />
             </Button>
         </div>

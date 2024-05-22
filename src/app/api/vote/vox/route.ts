@@ -1,9 +1,12 @@
-import { MIN_NET_SCORE_FOR_DELETION, MIN_TOTAL_VOTES_FOR_DELETION, VOTE_COOLDOWN_INTERVAL } from '@/config'
+"use server";
+// Use server is needed here to use uploadthing's UTApi
+import { MIN_NET_SCORE_FOR_DELETION, VOTE_COOLDOWN_INTERVAL } from '@/config'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { CooldownResponse } from '@/lib/validators/cooldown'
 import { PostVoteValidator } from '@/lib/validators/vote'
 import { z } from 'zod'
+import { utapi } from '../../uploadthing/utapi'
 
 export async function PATCH(req: Request) {
     try {
@@ -52,8 +55,27 @@ export async function PATCH(req: Request) {
                     }
                 },
             });
+            await db.cooldowns.upsert({
+                where: {
+                    userId: session.user.id,
+                },
+                create: {
+                    userId: session.user.id,
+                    voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
+                },
+                update: {
+                    voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
+                }
+            });
             const netScore = vox.votes.reduce((acc, vote) => acc + vote.net, 0) + (voteType === 'UP' ? 1 : -1);
             if (netScore <= MIN_NET_SCORE_FOR_DELETION) {
+                // TODO: Since we're deleting images on the server, 
+                // see if uploads on the server are also viable 
+                // instead of the client (prevents pre check overhead)
+                if (vox.imageUrls.length > 0) {
+                    const imageKeys = vox.imageUrls.map(url => url.split('/').pop()!);
+                    await utapi.deleteFiles(imageKeys);
+                }
                 await db.vox.update({
                     where: {
                         id: voxId,
@@ -65,22 +87,8 @@ export async function PATCH(req: Request) {
                     }
                 });
                 return new Response('You have successfully voxxed this post.', { status: 410 });
-            } else {
-                await db.cooldowns.upsert({
-                    where: {
-                        userId: session.user.id,
-                    },
-                    create: {
-                        userId: session.user.id,
-                        voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
-                    },
-                    update: {
-                        voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
-                    }
-                });
-                return new Response('OK');
             }
-
+            return new Response('OK');
         }
         const cooldownResponse: CooldownResponse = {
             timeLeft: Math.ceil((cooldown.voteCooldownEnds.getTime() - now.getTime()) / 1000),

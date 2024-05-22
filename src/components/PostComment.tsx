@@ -37,6 +37,7 @@ const PostComment: FC<PostCommentProps> = ({
     const [isReplying, setIsReplying] = useState<boolean>(false)
     const commentRef = useRef<HTMLDivElement>(null)
     const [input, setInput] = useState<string>(`@${comment.author.username} `)
+    const [isVoxxed, setIsVoxxed] = useState(comment.isVoxxed);
     const router = useRouter()
     useOnClickOutside(commentRef, () => {
         setIsReplying(false)
@@ -64,9 +65,9 @@ const PostComment: FC<PostCommentProps> = ({
 
     return (
         <div ref={commentRef} className='flex flex-col rounded-lg overflow-hidden border border-border'>
-            <div className='h-fit py-2 text-xs text-foreground px-3 flex items-center'>
+            <div className={`${isVoxxed ? 'text-primary' : 'text-foreground'} h-fit py-2 text-xs text-foreground px-3 flex items-center`}>
                 <Link
-                    className='underline text-foreground text-sm underline-offset-2 flex items-center gap-2'
+                    className='underline text-sm underline-offset-2 flex items-center gap-2'
                     href={`/user/${comment.author.id}`}
                 >
                     <UserAvatar user={comment.author} className='w-6 h-6' />
@@ -76,12 +77,16 @@ const PostComment: FC<PostCommentProps> = ({
                 {formatTimeToNow(new Date(comment.createdAt))}
             </div>
             <div className='h-fit bg-secondary px-3 py-2'>
-                <p className='text-sm text-foreground'>{comment.text}</p>
+                <p className={`${isVoxxed ? 'text-primary' : 'text-foreground'} text-sm`}>
+                    {isVoxxed ? 'VOXXED' : comment.text}
+                </p>
             </div>
             <div className='flex gap-2 items-center justify-between py-2 px-2'>
                 <CommentVotes
                     commentId={comment.id}
                     votesAmt={votesAmt}
+                    isVoxxed={isVoxxed}
+                    setIsVoxxed={setIsVoxxed}
                 />
 
                 <Button
@@ -90,7 +95,8 @@ const PostComment: FC<PostCommentProps> = ({
                         setIsReplying(true)
                     }}
                     variant='ghost'
-                    size="sm">
+                    size="sm"
+                >
                     <MessageSquare className='h-4 w-4 mr-1.5' />
                     Reply
                 </Button>

@@ -9,7 +9,7 @@ import { toast } from "@/hooks/use-toast";
 import { VoxCreationRequest, VoxPreImageUploadValidator } from "@/lib/validators/post";
 import axios, { AxiosError } from "axios";
 import { uploadFiles } from "@/lib/uploadthing";
-import gradientTextClasses from "./templates/gradientTextClasses";
+import { GRADIENT_TEXT_CLASSES } from "@/config";
 import TagPopover from "./TagPopover";
 import LocationPopover from "./LocationPopover";
 import { MAX_IMAGES_AMT } from "@/config";
@@ -18,6 +18,7 @@ import { ScrollArea } from "./ui/ScrollArea";
 import VoteFeed from "./VoteFeed";
 import { FeedVote } from "@/types/db";
 import Link from "next/link";
+import { useCustomToasts } from "@/hooks/use-custom-toasts";
 
 // TODO: Fix post creation backend to handle images, tags, and locations
 
@@ -43,6 +44,7 @@ const UserPanels: FC<UserPanelsProps> = ({ userId, initialVotes }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const postPanelContainerRef = useRef<HTMLDivElement>(null);
     const [recentlyVotedVoxesHeight, setRecentlyVotedVoxesHeight] = useState('23.2rem');
+    const { loginToast } = useCustomToasts();
     const initialData: VoxDataType = {
         content: '',
         tag: '',
@@ -84,6 +86,13 @@ const UserPanels: FC<UserPanelsProps> = ({ userId, initialVotes }) => {
                     variant: 'destructive',
                 })
             }
+
+            if (error instanceof AxiosError) {
+                if (error.response?.status === 401) {
+                    return loginToast();
+                }
+            }
+
             return toast({
                 title: 'Something went wrong.',
                 description: 'Your post was not published. Please try again.',
@@ -202,7 +211,7 @@ const UserPanels: FC<UserPanelsProps> = ({ userId, initialVotes }) => {
                     )}
                     <div className="flex gap-1 flex-wrap">
                         {voxData.tags.map((tag, i) => {
-                            const color = gradientTextClasses[i % gradientTextClasses.length];
+                            const color = GRADIENT_TEXT_CLASSES[i % GRADIENT_TEXT_CLASSES.length];
                             return (
                                 <div className="z-[1] bg-secondary transition-all px-2 py-1.5 rounded-lg flex items-center gap-0.5" key={`tag-${tag}-${i}`}>
                                     <p className={`${color}`}>#{tag}</p>

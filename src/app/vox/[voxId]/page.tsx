@@ -11,7 +11,7 @@ import { ImSpinner2 } from 'react-icons/im'
 import Link from 'next/link'
 import { UserAvatar } from '@/components/UserAvatar'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/Carousel'
-import gradientTextClasses from '@/components/templates/gradientTextClasses'
+import { GRADIENT_TEXT_CLASSES } from '@/config'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -75,7 +75,9 @@ const VoxPage = async ({ params: { voxId } }: { params: { voxId: string } }) => 
                         )}
                     </div>
                     <div className='bg-secondary min-h-14 h-fit p-3 mt-3 rounded-lg'>
-                        <p className='ml-2 text-foreground text-sm text-wrap break-words break-all'>{vox.content.toString()}</p>
+                        <p className={`${vox.isVoxxed ? 'text-primary' : 'text-foreground'} ml-2 text-sm text-wrap break-words break-all`}>
+                            {vox.content.toString()}
+                        </p>
                         {vox.imageUrls.length > 0 && (
                             <div className='mt-2 flex justify-center items-center w-full px-12 py-2.5 bg-background rounded-lg border-border border'>
                                 <Carousel
@@ -109,7 +111,7 @@ const VoxPage = async ({ params: { voxId } }: { params: { voxId: string } }) => 
                         {vox.tags.length > 0 && (
                             <div className="flex gap-1 flex-wrap mt-1">
                                 {vox.tags.map((tag, i) => {
-                                    const color = gradientTextClasses[i % gradientTextClasses.length];
+                                    const color = GRADIENT_TEXT_CLASSES[i % GRADIENT_TEXT_CLASSES.length];
                                     return (
                                         <Link key={`${vox.id}-tag-${i}`} href='/'>
                                             {/* TODO: Create tag page */}

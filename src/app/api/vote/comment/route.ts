@@ -1,4 +1,4 @@
-import { VOTE_COOLDOWN_INTERVAL } from '@/config'
+import { MIN_NET_SCORE_FOR_DELETION, VOTE_COOLDOWN_INTERVAL } from '@/config'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { CooldownResponse } from '@/lib/validators/cooldown'
@@ -13,6 +13,20 @@ export async function PATCH(req: Request) {
         if (!session?.user) {
             return new Response('Unauthorized', { status: 401 })
         }
+        const comment = await db.comment.findUnique({
+            where: {
+                id: commentId
+            },
+            include: {
+                votes: true
+            }
+        })
+        if (!comment) {
+            return new Response('Comment not found', { status: 404 });
+        }
+        if (comment.isVoxxed) {
+            return new Response('Already Voxxed', { status: 409 });
+        }
         let cooldown = await db.cooldowns.findUnique({
             where: {
                 userId: session.user.id,
@@ -20,18 +34,6 @@ export async function PATCH(req: Request) {
         })
         const now = new Date();
         if (!cooldown || cooldown.voteCooldownEnds < now) {
-            await db.cooldowns.upsert({
-                where: {
-                    userId: session.user.id,
-                },
-                create: {
-                    userId: session.user.id,
-                    voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
-                },
-                update: {
-                    voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
-                }
-            });
             await db.vote.upsert({
                 where: {
                     unique_user_comment: {
@@ -49,7 +51,32 @@ export async function PATCH(req: Request) {
                         increment: voteType === 'UP' ? 1 : -1
                     }
                 },
-            })
+            });
+            await db.cooldowns.upsert({
+                where: {
+                    userId: session.user.id,
+                },
+                create: {
+                    userId: session.user.id,
+                    voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
+                },
+                update: {
+                    voteCooldownEnds: new Date(now.getTime() + VOTE_COOLDOWN_INTERVAL),
+                }
+            });
+            const netScore = comment.votes.reduce((acc, vote) => acc + vote.net, 0) + (voteType === 'UP' ? 1 : -1);
+            if (netScore <= MIN_NET_SCORE_FOR_DELETION) {
+                await db.comment.update({
+                    where: {
+                        id: commentId
+                    },
+                    data: {
+                        text: 'VOXXED',
+                        isVoxxed: true
+                    }
+                })
+                return new Response('You have successfully voxxed this post.', { status: 410 });
+            }
             return new Response('OK');
         }
         const cooldownResponse: CooldownResponse = {

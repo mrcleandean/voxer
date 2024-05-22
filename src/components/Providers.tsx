@@ -15,6 +15,10 @@ type ProvidersProps = {
 
 const queryClient = new QueryClient()
 
+// TODO: Implement a provider to handle cooldowns on the client side with the server as a back up
+// ^Will prevent unnecessary requests to the server (spam)
+// ^Will also make the app more responsive
+
 const Providers: FC<ProvidersProps> = ({ children, ...props }) => {
     return (
         <>

@@ -80,7 +80,7 @@ const Post: FC<PostProps> = ({
                     </Link>
                 </div>
             </div>
-            <div className={`${isVoxxed ? 'bg-primary' : 'bg-background'} border-t border-border z-20 text-sm px-3 py-2 flex justify-between`}>
+            <div className='bg-background border-t border-border z-20 text-sm px-3 py-2 flex justify-between'>
                 <Link
                     href={`/vox/${vox.id}`}
                     className={cn(buttonVariants({ variant: 'ghost' }), 'w-fit h-7 flex items-center gap-2 text-foreground')}>

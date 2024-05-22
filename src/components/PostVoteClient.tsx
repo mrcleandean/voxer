@@ -31,6 +31,7 @@ const PostVoteClient = ({
 
     const makeVoxxedVisible = () => {
         if (setIsVoxxed === 'server-rendered') {
+            // Toast notification still works properly here, no refactoring needed for now
             router.refresh();
         } else {
             setIsVoxxed(true);
@@ -47,19 +48,19 @@ const PostVoteClient = ({
             await axios.patch(`/api/vote/vox`, payload)
         },
         onError: (err, voteType) => {
-            if (err instanceof AxiosError && err.response?.status === 410) {
-                makeVoxxedVisible();
-                return toast({
-                    title: 'You have successfully voxxed this post.',
-                    description: 'Content and images have been removed.'
-                });
-            }
             if (isVoxxed || err instanceof AxiosError && err.response?.status === 409) {
                 makeVoxxedVisible();
                 return toast({
                     title: 'Already Voxxed.',
                     description: 'This post was previously deleted.',
                 })
+            }
+            if (err instanceof AxiosError && err.response?.status === 410) {
+                makeVoxxedVisible();
+                return toast({
+                    title: 'You have successfully voxxed this post.',
+                    description: "It's content and images have been removed."
+                });
             }
             if (voteType === 'UP') setVotesAmt((prev) => prev - 1)
             else setVotesAmt((prev) => prev + 1)
@@ -89,7 +90,7 @@ const PostVoteClient = ({
     })
 
     return (
-        <div className={`${isVoxxed ? 'bg-primary brightness-[1.175]' : 'bg-secondary'} flex flex-col py-2`}>
+        <div className="bg-secondary flex flex-col py-2">
             {/* upvote */}
             <Button
                 onClick={() => vote('UP')}
@@ -101,7 +102,7 @@ const PostVoteClient = ({
             </Button>
 
             {/* score */}
-            <p className='text-center py-2 font-medium text-sm text-foreground'>
+            <p className={`${isVoxxed ? 'text-primary' : 'text-foreground'} text-center py-2 font-medium text-sm`}>
                 {votesAmt}
             </p>
 
