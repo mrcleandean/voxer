@@ -11,8 +11,8 @@ export const TAG_BOUNDS = [1, 20];
 
 export const MAX_IMAGES_AMT = 4;
 
-export const MINIMUM_VOTE_COUNT = 35;
-export const DELETION_RATIO = 0.75;
+export const MINIMUM_VOTE_COUNT = 35; // TODO: Implement this instead of MIN_TOTAL_VOTES for later versions of moderation
+export const DELETION_RATIO = 0.75; // TODO: Refer to above
 
 export const VOTE_COOLDOWN_INTERVAL = process.env.NODE_ENV === 'development' ? 1000 * 1 : 1000 * 5;
 export const COMMENT_COOLDOWN_INTERVAL = process.env.NODE_ENV === 'development' ? 1000 * 5 : 1000 * 30;

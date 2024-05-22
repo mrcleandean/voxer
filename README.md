@@ -2,6 +2,22 @@
 
 Welcome to Voxer, a unique social experiment where the community holds the power. Engage in discussions, share your views, and use your votes to directly moderate content, steering the platform away from centralized control. Join Voxer and shape the conversation in a truly democratic space.
 
+**Visit Production Domain @ https://www.voxerforums.com for a demo**
+
+## Run
+
+Clone this repository
+
+```
+cd voxer
+npm install
+npm run dev
+```
+
+To run locally, set up the values in the example.env, otherwise visit the production domain above for easy viewing.
+
+For easy testing, modify the cooldown NODE_ENV === 'development' values in the config.ts to your preference.
+
 ## Features
 
 - **Community-Driven Moderation Coming Soon!**: Users will have the power to moderate content through community votes, ensuring that the community's standards are upheld without centralized control.
